@@ -2,18 +2,19 @@
 (function () {
   // Replace with your deployed Apps Script URL
   const GAS_URL = 'https://script.google.com/macros/s/AKfycbwzLNAk6b7fva2qhygLg1oj5dzGMjLjYfXBzjH2nwk8lAMp6-8_GEE6KzjTVVGtu_1q/exec';
+  const SECRET_TOKEN = 'change_this_to_a_secret_token'; // must match token in Apps Script
 
+  // Function to submit form via fetch
   function submitForm(form) {
     const fd = new FormData(form);
-
-    // Optional: attach extra token for spam protection
-    fd.set('_t', 'change_this_to_a_secret_token');
+    fd.set('_t', SECRET_TOKEN);
+    fd.set('_page', location.href);
 
     return fetch(GAS_URL, {
       method: 'POST',
       body: fd,
-      mode: 'cors',       // required for cross-origin
-      credentials: 'omit' // no cookies
+      mode: 'cors',
+      credentials: 'omit'
     })
     .then(res => res.json())
     .catch(err => {
@@ -22,21 +23,21 @@
     });
   }
 
+  // Function to handle form submit events
   function handleSubmit(ev) {
-    ev.preventDefault(); // prevent default page reload
+    ev.preventDefault();
 
     let form = ev.target;
     if (form.tagName !== 'FORM') form = form.closest('form');
     if (!form) return;
 
-    // Optional: remove inline submit handlers
+    // Remove inline handlers to prevent conflicts
     try { form.onsubmit = null; form.removeAttribute('onsubmit'); } catch(e){}
 
     // Honeypot check (bots)
     const hp = form.querySelector("input[name='input_7']");
     if (hp && hp.value) return;
 
-    // Submit via fetch
     submitForm(form).then(data => {
       console.log('Form result:', data);
 
@@ -62,10 +63,25 @@
     });
   }
 
+  // Attach intercepts to forms and submit buttons
   function attach() {
-    document.addEventListener('submit', handleSubmit, true); // capture phase ensures interception
+    // Intercept native form submit
+    document.addEventListener('submit', handleSubmit, true);
+
+    // Intercept submit button clicks
+    document.addEventListener('click', function(ev){
+      const btn = ev.target.closest('input[type="submit"], button[type="submit"]');
+      if (!btn) return;
+      ev.preventDefault();
+      const form = btn.form;
+      if (form) handleSubmit({ target: form, preventDefault: ()=>{} });
+    }, true);
+
+    // Remove method attributes to prevent native POST
+    document.querySelectorAll('form').forEach(f => f.removeAttribute('method'));
   }
 
+  // Initialize
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', attach);
   } else {
