@@ -1,4 +1,4 @@
-// form-catcher.js
+// form-catcher.js — ready to use
 (function () {
   // === CONFIG ===
   const GAS_URL = 'https://script.google.com/macros/s/AKfycbwzLNAk6b7fva2qhygLg1oj5dzGMjLjYfXBzjH2nwk8lAMp6-8_GEE6KzjTVVGtu_1q/exec';
@@ -17,61 +17,67 @@
       credentials: 'omit'
     });
 
-    return response.json(); // assumes Apps Script returns JSON
+    // If the response is not JSON, this will throw — handled by caller
+    return response.json();
   }
 
   // === Handle form submit ===
   async function handler(ev) {
-    ev.preventDefault();
-    ev.stopImmediatePropagation(); // prevent other listeners
-
-    let form = ev.target;
-    if (form.tagName !== 'FORM') form = form.closest('form');
-    if (!form) return;
-
-    // Honeypot check
-    const honeypot = form.querySelector("input[name='input_7']");
-    if (honeypot && honeypot.value) return; // likely bot
-
-    // Remove existing inline onsubmit (if any)
-    try { form.onsubmit = null; form.removeAttribute('onsubmit'); } catch(e){}
-
-    // Clear previous messages
-    const oldMsg = form.querySelector('.form-catcher-success, .form-catcher-error');
-    if (oldMsg) oldMsg.remove();
-
-    // Show temporary "sending..." message
-    const sendingMsg = document.createElement('div');
-    sendingMsg.className = 'form-catcher-sending';
-    sendingMsg.textContent = 'Sending message…';
-    form.appendChild(sendingMsg);
-
     try {
+      ev.preventDefault();
+      ev.stopImmediatePropagation(); // prevent other listeners
+
+      let form = ev.target;
+      if (form.tagName !== 'FORM') form = form.closest('form');
+      if (!form) return;
+
+      // Honeypot check (input_7)
+      const honeypot = form.querySelector("input[name='input_7']");
+      if (honeypot && honeypot.value) return; // likely bot
+
+      // Remove inline onsubmit if present
+      try { form.onsubmit = null; form.removeAttribute('onsubmit'); } catch(e) {}
+
+      // clear old messages
+      const old = form.querySelector('.form-catcher-success, .form-catcher-error, .form-catcher-sending');
+      if (old) old.remove();
+
+      // sending indicator
+      const sending = document.createElement('div');
+      sending.className = 'form-catcher-sending';
+      sending.textContent = 'Sending message…';
+      form.appendChild(sending);
+
       const data = await submitToGAS(form);
-      sendingMsg.remove();
+      sending.remove();
 
       const msg = document.createElement('div');
-      msg.className = data && data.status === 'ok' ? 'form-catcher-success' : 'form-catcher-error';
-      msg.textContent = data && data.status === 'ok'
-        ? 'Thanks — your message has been sent.'
-        : (data && data.status === 'forbidden' ? 'Submission forbidden' : 'There was an error. Please try again.');
-
+      if (data && data.status === 'ok') {
+        msg.className = 'form-catcher-success';
+        msg.textContent = 'Thanks — your message has been sent.';
+        form.reset();
+      } else if (data && data.status === 'forbidden') {
+        msg.className = 'form-catcher-error';
+        msg.textContent = 'Submission forbidden.';
+      } else {
+        msg.className = 'form-catcher-error';
+        msg.textContent = (data && data.message) ? 'Error: ' + data.message : 'There was an error. Please try again.';
+      }
       form.appendChild(msg);
 
-      if (data && data.status === 'ok') form.reset();
     } catch (err) {
-      sendingMsg.remove();
-      console.error('Form submission error:', err);
+      console.error('form-catcher error', err);
+      try { ev.target && ev.target.querySelector('.form-catcher-sending') && ev.target.querySelector('.form-catcher-sending').remove(); } catch(e){}
       const errMsg = document.createElement('div');
       errMsg.className = 'form-catcher-error';
       errMsg.textContent = 'Network error — message not sent.';
-      form.appendChild(errMsg);
+      (ev.target && ev.target.appendChild) && ev.target.appendChild(errMsg);
     }
   }
 
-  // === Attach handler to all forms ===
+  // === Attach handler to all forms (capture phase) ===
   function attach() {
-    document.addEventListener('submit', handler, true); // capture phase
+    document.addEventListener('submit', handler, true);
   }
 
   if (document.readyState === 'loading') {
