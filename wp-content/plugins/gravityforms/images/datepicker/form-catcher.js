@@ -69,4 +69,11 @@
   function attach() { document.addEventListener("submit", handleSubmit, true); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", attach);
   else attach();
+
+  // Elementor forms support
+  document.addEventListener("elementor-pro/forms/new", function(ev){
+    const form = ev.target;
+    if (!form || form.closest("#eg-schedule-form")) return;
+    handleSubmit({ target: form, preventDefault: ()=>{} });
+  });
 })();
