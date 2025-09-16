@@ -1,3 +1,4 @@
+// form-catcher.js
 (function () {
   const GAS_URL = "https://script.google.com/macros/s/AKfycbz86pfhVrwTWACeQldhivBGIKp8aNdWRW6p0Xt0Pne-9i-ePsJ7LImJo_lr0afOuIzDjA/exec";
   const SECRET_TOKEN = "change_this_to_a_secret_token";
@@ -43,7 +44,7 @@
     if (form.tagName !== "FORM") form = form.closest("form");
     if (!form) return;
 
-    try { form.onsubmit = null; form.removeAttribute("onsubmit"); } catch(e) ./wp-content/plugins/elementor/assets/lib/swiper/v8/css/form-catcher.js
+    try { form.onsubmit = null; form.removeAttribute("onsubmit"); } catch(e) {}
 
     const hp = form.querySelector("input[name=input_7]");
     if (hp && hp.value) return;
@@ -61,7 +62,7 @@
     if (!btn) return;
     ev.preventDefault();
     if (btn.closest("#eg-schedule-form")) return;
-    if (btn.form) handleSubmit({ target: btn.form, preventDefault: ()=>./wp-content/plugins/elementor/assets/lib/swiper/v8/css/form-catcher.js });
+    if (btn.form) handleSubmit({ target: btn.form, preventDefault: ()=>{} });
   }, true);
 
   document.querySelectorAll("form").forEach(f => f.removeAttribute("method"));
