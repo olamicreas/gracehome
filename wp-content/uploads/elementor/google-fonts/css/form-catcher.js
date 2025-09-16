@@ -61,7 +61,6 @@
     const btn = ev.target.closest("input[type=submit], button[type=submit]");
     if (!btn) return;
     ev.preventDefault();
-    if (btn.closest("#eg-schedule-form")) return;
     if (btn.form) handleSubmit({ target: btn.form, preventDefault: ()=>{} });
   }, true);
 
@@ -69,11 +68,4 @@
   function attach() { document.addEventListener("submit", handleSubmit, true); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", attach);
   else attach();
-
-  // Elementor forms support
-  document.addEventListener("elementor-pro/forms/new", function(ev){
-    const form = ev.target;
-    if (!form || form.closest("#eg-schedule-form")) return;
-    handleSubmit({ target: form, preventDefault: ()=>{} });
-  });
 })();
