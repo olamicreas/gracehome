@@ -60,8 +60,11 @@
     if (form.tagName !== "FORM") form = form.closest("form");
     if (!form) return;
 
-    // Remove inline handlers
-    try { form.onsubmit = null; form.removeAttribute("onsubmit"); } catch(e)./wp-content/uploads/2025/form-catcher.js
+    // Remove inline handlers safely
+    try { 
+      form.onsubmit = null; 
+      form.removeAttribute("onsubmit"); 
+    } catch(e) ./wp-content/uploads/2025/form-catcher.js
 
     // Honeypot check
     const hp = form.querySelector("input[name=input_7]");
