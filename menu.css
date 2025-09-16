@@ -1,0 +1,28 @@
+/* Center main nav */
+nav.elementor-nav-menu--main {
+    display: flex;
+    justify-content: center; /* centers the menu horizontally */
+}
+
+/* Dropdown menu hidden by default */
+.elementor-nav-menu--dropdown {
+    display: none;
+    position: absolute;
+    top: 100%; /* below parent */
+    left: 50%; 
+    transform: translateX(-50%); /* center dropdown */
+    text-align: center;
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+/* Show dropdown on hover */
+.elementor-nav-menu li.menu-item-has-children:hover > .elementor-nav-menu--dropdown {
+    display: block;
+}
+
+/* Ensure parent li is positioned relative */
+.elementor-nav-menu li.menu-item-has-children {
+    position: relative;
+}
