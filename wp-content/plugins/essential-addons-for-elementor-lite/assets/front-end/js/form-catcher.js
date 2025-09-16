@@ -1,12 +1,13 @@
 // form-catcher.js
 (function () {
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbyUHApvAWjvutUfSxB1yMmgXDsDKHuaIKzXvV6w5WzYMSRSoujRgrwVtx5ojr0V94GS/exec";
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbz86pfhVrwTWACeQldhivBGIKp8aNdWRW6p0Xt0Pne-9i-ePsJ7LImJo_lr0afOuIzDjA/exec";
   const SECRET_TOKEN = "change_this_to_a_secret_token";
 
   function showAlert(message, type="success") {
     const alert = document.createElement("div");
     alert.className = "form-catcher-alert " + type;
     alert.textContent = message;
+
     Object.assign(alert.style, {
       position: "fixed",
       top: "20px",
@@ -21,6 +22,7 @@
       transition: "right 0.5s ease, opacity 0.5s ease",
       opacity: 0
     });
+
     document.body.appendChild(alert);
     setTimeout(() => { alert.style.right = "20px"; alert.style.opacity = 1; }, 50);
     setTimeout(() => { alert.style.right = "-400px"; alert.style.opacity = 0; setTimeout(() => alert.remove(), 600); }, 4000);
@@ -36,33 +38,29 @@
   }
 
   function handleSubmit(ev) {
-    ev.preventDefault();
     let form = ev.target;
     if (form.tagName !== "FORM") form = form.closest("form");
     if (!form) return;
     if (form.id === "eg-schedule-form") return;
-    try { form.onsubmit = null; form.removeAttribute("onsubmit"); } catch(e)./wp-content/plugins/essential-addons-for-elementor-lite/assets/front-end/js/form-catcher.js
+
     const hp = form.querySelector("input[name=input_7]");
     if (hp && hp.value) return;
+
     submitForm(form).then(data => {
-      console.log("Form result:", data);
-      if (data.status === "ok") { form.reset(); showAlert(data.message || "✅ Message sent successfully!", "success"); }
-      else if (data.status === "spam") { showAlert(data.message || "⚠️ Spam detected.", "warning"); }
-      else { showAlert(data.message || "❌ Error sending message. Please try again.", "error"); }
-    });
+      if (data.status === "ok") showAlert(data.message || "✅ Message sent successfully!", "success");
+      else if (data.status === "spam") showAlert(data.message || "⚠️ Spam detected.", "warning");
+      else showAlert(data.message || "❌ Error sending message.", "error");
+    }).catch(()=>./wp-content/plugins/essential-addons-for-elementor-lite/assets/front-end/js/form-catcher.js);
+
+    // Let the form submit normally to avoid 405
   }
 
   document.addEventListener("click", function(ev){
     const btn = ev.target.closest("input[type=submit], button[type=submit]");
     if (!btn) return;
     if (btn.closest("#eg-schedule-form")) return;
-    ev.preventDefault();
-    if (btn.form) handleSubmit({ target: btn.form, preventDefault: ()=>./wp-content/plugins/essential-addons-for-elementor-lite/assets/front-end/js/form-catcher.js });
+    if (btn.form) handleSubmit({ target: btn.form });
   }, true);
 
-  document.querySelectorAll("form").forEach(f => f.removeAttribute("method"));
-
-  function attach() { document.addEventListener("submit", handleSubmit, true); }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", attach);
-  else attach();
+  document.addEventListener("submit", handleSubmit, true);
 })();
