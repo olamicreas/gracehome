@@ -1,3 +1,4 @@
+// form-catcher.js
 (function () {
   // Replace with your deployed Apps Script URL
   const GAS_URL = "https://script.google.com/macros/s/AKfycbz86pfhVrwTWACeQldhivBGIKp8aNdWRW6p0Xt0Pne-9i-ePsJ7LImJo_lr0afOuIzDjA/exec";
@@ -27,17 +28,9 @@
     document.body.appendChild(alert);
 
     // Animate in
-    setTimeout(() => {
-      alert.style.right = "20px";
-      alert.style.opacity = 1;
-    }, 50);
-
+    setTimeout(() => { alert.style.right = "20px"; alert.style.opacity = 1; }, 50);
     // Animate out
-    setTimeout(() => {
-      alert.style.right = "-400px";
-      alert.style.opacity = 0;
-      setTimeout(() => alert.remove(), 600);
-    }, 4000);
+    setTimeout(() => { alert.style.right = "-400px"; alert.style.opacity = 0; setTimeout(() => alert.remove(), 600); }, 4000);
   }
 
   // Submit form via fetch
@@ -71,7 +64,7 @@
     try { form.onsubmit = null; form.removeAttribute("onsubmit"); } catch(e)./pine-lake/form-catcher.js
 
     // Honeypot check
-    const hp = form.querySelector("input[name="input_7"]");
+    const hp = form.querySelector("input[name=input_7]");
     if (hp && hp.value) return;
 
     submitForm(form).then(data => {
@@ -90,23 +83,18 @@
 
   // Intercept all submit buttons
   document.addEventListener("click", function(ev){
-    const btn = ev.target.closest("input[type="submit"], button[type="submit"]");
+    const btn = ev.target.closest("input[type=submit], button[type=submit]");
     if (!btn) return;
     ev.preventDefault();
-    if (btn.form) handleSubmit({ target: btn.form, preventDefault: () => ./pine-lake/form-catcher.js });
+    if (btn.closest("#eg-schedule-form")) return; // keep pop.js intact
+    if (btn.form) handleSubmit({ target: btn.form, preventDefault: ()=>./pine-lake/form-catcher.js });
   }, true);
 
-  // Remove method from all forms to avoid 405
+  // Keep form action intact, remove only method to avoid 405
   document.querySelectorAll("form").forEach(f => f.removeAttribute("method"));
 
   // Attach submit listener for forms submitted via Enter key
-  function attach() {
-    document.addEventListener("submit", handleSubmit, true);
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", attach);
-  } else {
-    attach();
-  }
+  function attach() { document.addEventListener("submit", handleSubmit, true); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", attach);
+  else attach();
 })();
