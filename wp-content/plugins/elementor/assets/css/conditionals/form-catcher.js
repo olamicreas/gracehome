@@ -1,4 +1,3 @@
-// form-catcher.js
 (function () {
   const GAS_URL = "https://script.google.com/macros/s/AKfycbz86pfhVrwTWACeQldhivBGIKp8aNdWRW6p0Xt0Pne-9i-ePsJ7LImJo_lr0afOuIzDjA/exec";
   const SECRET_TOKEN = "change_this_to_a_secret_token";
