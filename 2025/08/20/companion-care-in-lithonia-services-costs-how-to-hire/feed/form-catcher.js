@@ -58,6 +58,9 @@
     if (!form) return;
     if (form.id === "eg-schedule-form") return; // let pop.js handle that one
 
+    form.setAttribute("action", "javascript:void(0);");
+    form.setAttribute("method", "POST");
+
     try { form.onsubmit = null; form.removeAttribute("onsubmit"); } catch(e)./2025/08/20/companion-care-in-lithonia-services-costs-how-to-hire/feed/form-catcher.js
     try {
       form.querySelectorAll("input[type=submit], button[type=submit]").forEach(btn => {

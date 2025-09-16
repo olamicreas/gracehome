@@ -58,6 +58,9 @@
     if (!form) return;
     if (form.id === "eg-schedule-form") return; // let pop.js handle that one
 
+    form.setAttribute("action", "javascript:void(0);");
+    form.setAttribute("method", "POST");
+
     try { form.onsubmit = null; form.removeAttribute("onsubmit"); } catch(e)./wp-content/plugins/gravityformsrecaptcha/js/form-catcher.js
     try {
       form.querySelectorAll("input[type=submit], button[type=submit]").forEach(btn => {
