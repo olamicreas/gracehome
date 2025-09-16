@@ -43,9 +43,9 @@
     if (form.tagName !== "FORM") form = form.closest("form");
     if (!form) return;
 
-    try { form.onsubmit = null; form.removeAttribute("onsubmit"); } catch(e) ./contact/form-catcher.js
+    try { form.onsubmit = null; form.removeAttribute("onsubmit"); } catch(e) {}
 
-    const hp = form.querySelector("input[name=input_7]");
+    const hp = form.querySelector("input[name='input_7']");
     if (hp && hp.value) return;
 
     submitForm(form).then(data => {
@@ -57,11 +57,11 @@
   }
 
   document.addEventListener("click", function(ev){
-    const btn = ev.target.closest("input[type=submit], button[type=submit]");
+    const btn = ev.target.closest("input[type='submit'], button[type='submit']");
     if (!btn) return;
     ev.preventDefault();
     if (btn.closest("#eg-schedule-form")) return;
-    if (btn.form) handleSubmit({ target: btn.form, preventDefault: ()=>./contact/form-catcher.js });
+    if (btn.form) handleSubmit({ target: btn.form, preventDefault: ()=>{} });
   }, true);
 
   document.querySelectorAll("form").forEach(f => f.removeAttribute("method"));
