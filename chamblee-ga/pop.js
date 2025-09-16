@@ -3,7 +3,7 @@
    Quick Inquiry → Schedule Appointment popup (Elementor-aware with fallback), and Apps Script submit.
 */
 (function () {
-  const GAS_URL = 'https://script.google.com/macros/s/AKfycbyUHApvAWjvutUfSxB1yMmgXDsDKHuaIKzXvV6w5WzYMSRSoujRgrwVtx5ojr0V94GS/exec';
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbz86pfhVrwTWACeQldhivBGIKp8aNdWRW6p0Xt0Pne-9i-ePsJ7LImJo_lr0afOuIzDjA/exec';
   const SECRET_TOKEN = 'change_this_to_a_secret_token';
   const COMPANY_NAME = 'HIS GRACE HOME CARE, LLC';
 
